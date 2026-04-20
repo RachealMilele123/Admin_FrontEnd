@@ -136,6 +136,13 @@ function InternshipAdmin() {
           <p>{item.location}</p>
           <p>{item.duration}</p>
           <p>{item.deadline}</p>
+          <p>{item.description}</p>
+          <p>{item.salary}</p>
+          <p>{item.requirements}</p>
+          <p>{item.idealCandidate}</p>
+          <p>{item.keyResponsibilities}</p>
+          <p>{item.internshipBenefits}</p>
+          <p>{item.expectedOutcomes}</p>
         </div>
       ))}
     </div>
