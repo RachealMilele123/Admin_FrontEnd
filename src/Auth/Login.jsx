@@ -24,7 +24,7 @@ const Login = () => {
       </Text>
 
       <Paper withBorder shadow="sm" p={22} mt={30} radius="md">
-        <TextInput label="Email" placeholder="you@mantine.dev" required radius="md" />
+        <TextInput label="Email" placeholder="you@gmail.com" required radius="md" />
         <PasswordInput label="Password" placeholder="Your password" required mt="md" radius="md" />
         <Group justify="space-between" mt="lg">
           <Checkbox label="Remember me" />
