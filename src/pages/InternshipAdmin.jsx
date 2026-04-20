@@ -13,7 +13,15 @@ function InternshipAdmin() {
       duration: "",
       deadline: "",
       description: "",
+      salary: "",
       requirements: "",
+      idealCandidate: "",
+      keyResponsibilities: "",
+      internshipBenefits: "",
+      expectedOutcomes: "",
+
+
+
     },
   });
 
@@ -36,7 +44,7 @@ function InternshipAdmin() {
 
         <TextInput
           label="Company Name"
-          placeholder="e.g MTN Zambia"
+          placeholder="e.g Cavendish University"
           mt="sm"
           {...form.getInputProps("company")}
         />
@@ -70,11 +78,48 @@ function InternshipAdmin() {
         />
 
         <Textarea
+        label="Salary/Stipend"
+        placeholder="e.g $1000/month or Unpaid"
+        mt="sm"
+        {...form.getInputProps("salary")}
+        />
+
+
+        <Textarea
           label="Requirements"
           placeholder="List requirements..."
           mt="sm"
           {...form.getInputProps("requirements")}
         />
+
+        <Textarea
+          label="Internship Benefits"
+          placeholder="List the benefits..."
+          mt="sm"
+          {...form.getInputProps("internshipBenefits")}
+        />
+
+        <Textarea
+          label="Key Responsibilities"
+          placeholder="List the key responsibilities..."
+          mt="sm"
+          {...form.getInputProps("keyResponsibilities")}
+        />
+
+        <Textarea
+          label="Ideal Candidate"
+          placeholder="Describe the ideal candidate..."
+          mt="sm"
+          {...form.getInputProps("idealCandidate")}
+        />
+
+        <Textarea
+            label="Expected Outcomes"   
+            placeholder="List the expected outcomes..."
+            mt="sm"
+            {...form.getInputProps("expectedOutcomes")}
+        />
+
 
         <Button type="submit" fullWidth mt="md">
           Add Internship
