@@ -1,11 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Hero from "./components/Hero";
 import AdminLogin from "./pages/AdminLogin";
 import Admin from "./pages/Admin";
 import Login from "./Auth/Login";
 import { MantineProvider } from "@mantine/core";
 import '@mantine/core/styles.css';
 import InternshipAdmin from "./pages/InternshipAdmin";
+import ScholarshipAdmin from "./pages/ScholarshipAdmin";
 
 
 function App() {
@@ -25,6 +25,10 @@ function App() {
         
         {/* INTERNSHIP ADMIN */}
         <Route path="/admin/internships" element={<InternshipAdmin />} /> 
+      </Routes>
+        {/* SCHOLARSHIP ADMIN */} 
+        <Routes>
+        <Route path="/admin/scholarships" element={<ScholarshipAdmin />} />
       </Routes>
     </Router>
     </MantineProvider>
