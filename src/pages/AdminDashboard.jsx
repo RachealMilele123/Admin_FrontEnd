@@ -18,43 +18,66 @@ import {
   ScrollArea,
   Code,
   Box,
+  Divider,
 } from "@mantine/core";
 
 import {
-  IconHome,
+  IconGauge,
   IconUsers,
+  IconSchool,
+  IconPresentationAnalytics,
   IconBell,
   IconSettings,
-  IconChartBar,
-  IconMail,
   IconLogout,
-  IconSchool,
-  IconGauge,
-  IconCalendarStats,
   IconFileAnalytics,
-  IconPresentationAnalytics,
+  IconCalendarStats,
+  IconNotes,
   IconAdjustments,
   IconLock,
-  IconNotes,
+  IconMail,
+  IconChartBar,
 } from "@tabler/icons-react";
+
+import { LineChart, BarChart } from "@mantine/charts";
 
 import "./Navbar.css";
 
+/* ---------------- MOCK DATA ---------------- */
+
 const navItems = [
-  { label: "Dashboard", icon: IconGauge },
+  { label: "Overview", icon: IconGauge },
   { label: "Scholarships", icon: IconSchool },
   { label: "Users", icon: IconUsers },
   { label: "Analytics", icon: IconPresentationAnalytics },
-  { label: "Emails", icon: IconMail },
-  { label: "Notifications", icon: IconBell },
   { label: "Reports", icon: IconFileAnalytics },
-  { label: "Releases", icon: IconCalendarStats },
-  { label: "News", icon: IconNotes },
-  { label: "Settings", icon: IconAdjustments },
+  { label: "Messages", icon: IconMail },
+  { label: "Notifications", icon: IconBell },
+  { label: "Settings", icon: IconSettings },
   { label: "Security", icon: IconLock },
   { label: "Logout", icon: IconLogout },
 ];
 
+/* 📊 Chart Data */
+const lineData = [
+  { month: "Jan", users: 200, applications: 120 },
+  { month: "Feb", users: 320, applications: 180 },
+  { month: "Mar", users: 450, applications: 240 },
+  { month: "Apr", users: 600, applications: 300 },
+  { month: "May", users: 820, applications: 410 },
+];
+
+const barData = [
+  { category: "Business", scholarships: 40 },
+  { category: "STEM", scholarships: 70 },
+  { category: "Arts", scholarships: 30 },
+  { category: "Law", scholarships: 55 },
+];
+const activity = [
+  "New user registered",
+  "Scholarship application submitted",
+  "Admin updated settings",
+  "New message received",
+];
 function AdminDashboard() {
   const [opened, setOpened] = useState(false);
 
@@ -82,16 +105,12 @@ function AdminDashboard() {
   return (
     <AppShell
       padding="md"
-      navbar={{
-        width: 280,
-        breakpoint: "sm",
-        collapsed: { mobile: !opened },
-      }}
+      navbar={{ width: 280, breakpoint: "sm", collapsed: { mobile: !opened } }}
       header={{ height: 70 }}
     >
       {/* HEADER */}
       <AppShell.Header px="md">
-        <Group h="100%" justify="space-between">
+        <Group justify="space-between" h="100%">
           <Group>
             <Burger
               opened={opened}
@@ -101,143 +120,174 @@ function AdminDashboard() {
             />
 
             <Title order={3} c="blue">
-              Scholar Link Admin
+              ScholarLink
             </Title>
           </Group>
 
-          <Text fw={600}>Welcome, Admin</Text>
+          <Badge color="green" variant="light">
+            System Online
+          </Badge>
         </Group>
       </AppShell.Header>
 
       {/* SIDEBAR */}
       <AppShell.Navbar p="md">
-        <Group justify="space-between" mb="lg">
-          <Text fw={700} size="lg">
-            Dashboard
-          </Text>
-
-          <Code fw={700}>v1.0.0</Code>
+        <Group justify="space-between" mb="md">
+          <Text fw={700}>Admin Panel</Text>
+          <Code>v2.0</Code>
         </Group>
 
         <ScrollArea style={{ flex: 1 }}>
           <Stack gap="xs">
-            {navItems.map((item, index) => (
+            {navItems.map((item, i) => (
               <NavLink
-                key={index}
+                key={i}
                 label={item.label}
-                leftSection={<item.icon size={18} stroke={1.5} />}
-                active={item.label === "Dashboard"}
-                variant="filled"
-                color="blue"
-                className="custom-navlink"
+                leftSection={<item.icon size={18} />}
+                active={item.label === "Overview"}
               />
             ))}
           </Stack>
         </ScrollArea>
 
-        <Box mt="md">
-          <Text size="sm" c="dimmed">
-            Logged in as
-          </Text>
+        <Divider my="md" />
 
-          <Text fw={600}>Administrator</Text>
-        </Box>
+        <Text size="sm" c="dimmed">
+          Logged in as
+        </Text>
+        <Text fw={600}>Super Admin</Text>
       </AppShell.Navbar>
 
-      {/* MAIN CONTENT */}
+      {/* MAIN */}
       <AppShell.Main>
         <Container fluid>
-          {/* PAGE TITLE */}
+
+          {/* HEADER */}
           <Group justify="space-between" mb="xl">
             <div>
-              <Title order={2}>Admin Overview</Title>
-
+              <Title order={2}>Dashboard Overview</Title>
               <Text c="dimmed">
-                Manage scholarships, users, analytics and notifications
+                Monitor system growth, users, and performance
               </Text>
             </div>
 
             <Button leftSection={<IconSchool size={18} />}>
-              Add Scholarship
+              Create Scholarship
             </Button>
           </Group>
 
-          {/* STATS */}
-          <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} mb="xl">
-            <Card shadow="sm" padding="lg" radius="lg" withBorder>
+          {/* KPI CARDS */}
+           <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} mb="xl">
+            <Card shadow="sm" padding="lg" radius="md" withBorder>
               <Group justify="space-between">
                 <div>
                   <Text size="sm" c="dimmed">
                     Total Scholarships
                   </Text>
-
                   <Title order={2}>128</Title>
                 </div>
 
-                <ThemeIcon size={55} radius="xl" color="blue">
+                <ThemeIcon size={50} radius="md" color="blue">
                   <IconSchool size={28} />
                 </ThemeIcon>
               </Group>
             </Card>
 
-            <Card shadow="sm" padding="lg" radius="lg" withBorder>
+            <Card shadow="sm" padding="lg" radius="md" withBorder>
               <Group justify="space-between">
                 <div>
                   <Text size="sm" c="dimmed">
                     Applications
                   </Text>
-
                   <Title order={2}>356</Title>
                 </div>
 
-                <ThemeIcon size={55} radius="xl" color="green">
+                <ThemeIcon size={50} radius="md" color="green">
                   <IconChartBar size={28} />
                 </ThemeIcon>
               </Group>
             </Card>
 
-            <Card shadow="sm" padding="lg" radius="lg" withBorder>
+            <Card shadow="sm" padding="lg" radius="md" withBorder>
               <Group justify="space-between">
                 <div>
                   <Text size="sm" c="dimmed">
                     Users
                   </Text>
-
                   <Title order={2}>1,250</Title>
                 </div>
 
-                <ThemeIcon size={55} radius="xl" color="orange">
+                <ThemeIcon size={50} radius="md" color="orange">
                   <IconUsers size={28} />
                 </ThemeIcon>
               </Group>
             </Card>
-
-            <Card shadow="sm" padding="lg" radius="lg" withBorder>
+          <Card shadow="sm" padding="lg" radius="md" withBorder>
               <Group justify="space-between">
                 <div>
                   <Text size="sm" c="dimmed">
                     Notifications
                   </Text>
-
                   <Title order={2}>85</Title>
                 </div>
 
-                <ThemeIcon size={55} radius="xl" color="red">
+                <ThemeIcon size={50} radius="md" color="red">
                   <IconBell size={28} />
                 </ThemeIcon>
               </Group>
             </Card>
           </SimpleGrid>
 
+          {/* CHARTS SECTION (🔥 PREMIUM LOOK) */}
+          <SimpleGrid cols={{ base: 1, md: 2 }} mb="xl">
+
+            {/* LINE CHART */}
+            <Card shadow="lg" radius="lg" p="lg" withBorder>
+              <Group justify="space-between" mb="md">
+                <Title order={4}>Growth Analytics</Title>
+                <IconChartBar size={20} />
+              </Group>
+
+              <LineChart
+                h={280}
+                data={lineData}
+                dataKey="month"
+                series={[
+                  { name: "users", color: "blue.6" },
+                  { name: "applications", color: "green.6" },
+                ]}
+                curveType="natural"
+              />
+            </Card>
+
+            {/* BAR CHART */}
+            <Card shadow="lg" radius="lg" p="lg" withBorder>
+              <Group justify="space-between" mb="md">
+                <Title order={4}>Scholarship Categories</Title>
+                <IconChartBar size={20} />
+              </Group>
+
+              <BarChart
+                h={280}
+                data={barData}
+                dataKey="category"
+                series={[
+                  { name: "scholarships", color: "violet.6" },
+                ]}
+                tickLine="y"
+              />
+            </Card>
+
+          </SimpleGrid>
+
           {/* TABLE */}
-          <Card shadow="sm" padding="lg" radius="lg" withBorder>
+          <Card shadow="sm" radius="lg" p="lg" withBorder>
             <Group justify="space-between" mb="md">
               <Title order={4}>Recent Scholarships</Title>
-
               <Button variant="light">View All</Button>
             </Group>
 
-            <Table striped highlightOnHover verticalSpacing="md">
+            <Table striped highlightOnHover>
               <Table.Thead>
                 <Table.Tr>
                   <Table.Th>Name</Table.Th>
@@ -248,24 +298,14 @@ function AdminDashboard() {
               </Table.Thead>
 
               <Table.Tbody>
-                {rows.map((row, index) => (
-                  <Table.Tr key={index}>
-                    <Table.Td>{row.name}</Table.Td>
-
-                    <Table.Td>{row.level}</Table.Td>
-
-                    <Table.Td>{row.field}</Table.Td>
-
+                {rows.map((r, i) => (
+                  <Table.Tr key={i}>
+                    <Table.Td>{r.name}</Table.Td>
+                    <Table.Td>{r.level}</Table.Td>
+                    <Table.Td>{r.field}</Table.Td>
                     <Table.Td>
-                      <Badge
-                        color={
-                          row.status === "Published"
-                            ? "green"
-                            : "yellow"
-                        }
-                        variant="light"
-                      >
-                        {row.status}
+                      <Badge color={r.status === "Published" ? "green" : "yellow"}>
+                        {r.status}
                       </Badge>
                     </Table.Td>
                   </Table.Tr>
@@ -273,6 +313,23 @@ function AdminDashboard() {
               </Table.Tbody>
             </Table>
           </Card>
+
+           {/* ACTIVITY PANEL */}
+          <Card shadow="sm" radius="lg" p="lg" withBorder>
+            <Title order={4} mb="md">
+              Recent Activity
+            </Title>
+
+            <Stack gap="xs">
+              {activity.map((a, i) => (
+                <Group key={i}>
+                  <ThemeIcon size={10} radius="xl" color="blue" />
+                  <Text size="sm">{a}</Text>
+                </Group>
+              ))}
+            </Stack>
+          </Card>
+
         </Container>
       </AppShell.Main>
     </AppShell>
