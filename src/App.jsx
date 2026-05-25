@@ -15,7 +15,7 @@ function App() {
       <Router>
         <Routes>
           {/* DEFAULT HOME PAGE */}
-          <Route path="/" element={<Login />} />
+          <Route path="/admin-dashboard" element={<Login />} />
 
           {/* ADMIN LOGIN */}
           <Route path="/admin-login" element={<AdminLogin />} />
