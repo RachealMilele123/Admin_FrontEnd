@@ -26,7 +26,7 @@ function App() {
 
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="users" element={<Users />} />
-            <Route path="create-user" element={<CreateUser />} />
+            <Route path="/admin/create-user" element={<CreateUser />} />
             <Route path="create-scholarship" element={<CreateScholarship />} />
 
           </Route>

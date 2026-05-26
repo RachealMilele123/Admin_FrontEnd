@@ -65,9 +65,12 @@ function Users() {
       <Group justify="space-between" mb="md">
         <Title order={3}>Users Management</Title>
 
-        <Button onClick={() => navigate("/auth/createuser")}>
+        {/* <Button onClick={() => navigate("/auth/create-user")}>
           + Create User
-        </Button>
+        </Button> */}
+        <Button onClick={() => navigate("/admin/create-user")}>
+  + Create User
+</Button>
       </Group>
 
       {/* SEARCH */}
