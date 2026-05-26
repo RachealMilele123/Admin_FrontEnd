@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Card,
@@ -32,30 +32,27 @@ function CreateScholarship() {
     description: "",
   });
 
-  const [scholarships, setScholarships] = useState([
-    {
-      id: 1,
-      title: "Global STEM Excellence",
-      category: "STEM",
-      type: "Undergraduate",
-      organization: "UNESCO",
-      location: "Canada",
-      deadline: "2026-08-10",
-      status: "Open",
-      description: "Scholarship for outstanding STEM students worldwide.",
-    },
-    {
-      id: 2,
-      title: "Africa Leadership Grant",
-      category: "Business",
-      type: "Masters",
-      organization: "African Union",
-      location: "South Africa",
-      deadline: "2026-09-15",
-      status: "Open",
-      description: "Leadership and entrepreneurship scholarship program.",
-    },
-  ]);
+  const [scholarships, setScholarships] = useState([]);
+
+  const fetchScholarships = async () => {
+    try {
+      const res = await fetch(`${API_URL}/scholars`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      console.log("res", data);
+      setScholarships(data.scholars);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchScholarships();
+  }, []);
 
   const handleChange = (field, value) => {
     setForm({ ...form, [field]: value });
@@ -72,7 +69,7 @@ function CreateScholarship() {
       });
 
       console.log("response", res);
-
+fetchScholarships();
       if (!res.ok) {
         console.error("Failed to create scholarship");
         return;
@@ -140,29 +137,20 @@ function CreateScholarship() {
             <Table.Tr>
               <Table.Th>Title</Table.Th>
               <Table.Th>Category</Table.Th>
-              <Table.Th>Type</Table.Th>
-              <Table.Th>Organization</Table.Th>
-              <Table.Th>Status</Table.Th>
               <Table.Th>Actions</Table.Th>
             </Table.Tr>
           </Table.Thead>
 
           <Table.Tbody>
-            {scholarships.map((scholarship) => (
+            {scholarships?.map((scholarship) => (
               <Table.Tr key={scholarship.id}>
-                <Table.Td>{scholarship.title}</Table.Td>
+                <Table.Td>{scholarship.name}</Table.Td>
 
                 <Table.Td>
                   <Badge color="violet">{scholarship.category}</Badge>
                 </Table.Td>
 
-                <Table.Td>{scholarship.type}</Table.Td>
-
-                <Table.Td>{scholarship.organization}</Table.Td>
-
-                <Table.Td>
-                  <Badge color="green">{scholarship.status}</Badge>
-                </Table.Td>
+                <Table.Td></Table.Td>
 
                 <Table.Td>
                   <Button
