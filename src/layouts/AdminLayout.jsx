@@ -30,18 +30,27 @@ import {
 
 const navItems = [
   { label: "Overview", icon: IconGauge, path: "/admin/dashboard" },
-  { label: "Scholarships", icon: IconSchool, path: "/admin/create-scholarship" },
+  {
+    label: "Scholarships",
+    icon: IconSchool,
+    path: "/admin/create-scholarship",
+  },
+  { label: "Scholars", icon: IconUsers, path: "/admin/scholars" },
   { label: "Users", icon: IconUsers, path: "/admin/users" },
-  { label: "Analytics", icon: IconPresentationAnalytics, path: "/admin/analytics" },
+  {
+    label: "Analytics",
+    icon: IconPresentationAnalytics,
+    path: "/admin/analytics",
+  },
   { label: "Reports", icon: IconFileAnalytics, path: "/admin/reports" },
   { label: "Messages", icon: IconMail, path: "/admin/messages" },
   { label: "Notifications", icon: IconBell, path: "/admin/notifications" },
   { label: "Settings", icon: IconSettings, path: "/admin/settings" },
   { label: "Security", icon: IconLock, path: "/admin/security" },
-  { label: "Logout", icon: IconLogout, path: "/admin/logout" },
 ];
 
 function AdminLayout() {
+  const userInfo = JSON.parse(localStorage.getItem("user"));
   const [opened, setOpened] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -70,7 +79,11 @@ function AdminLayout() {
             </Title>
           </Group>
 
-          <Badge color="green">System Online</Badge>
+          <Badge color="green">
+            {userInfo
+              ? `Welcome, ${userInfo.firstName} ${userInfo.lastName}`
+              : "System Online"}
+          </Badge>
         </Group>
       </AppShell.Header>
 

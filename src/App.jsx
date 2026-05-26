@@ -13,6 +13,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Users from "./pages/User";
 import CreateUser from "./Auth/CreateUser";
 import CreateScholarship from "./pages/CreateScholarship";
+import Scholars from "./pages/Scholars";
 import Reports from "./pages/Reports";
 import Analytics from "./pages/Analytics";
 import Messages from "./pages/Message";
@@ -39,6 +40,7 @@ function App() {
                 path="create-scholarship"
                 element={<CreateScholarship />}
               />
+              <Route path="scholars" element={<Scholars />} />
               <Route path="reports" element={<Reports />} />
               <Route path="analytics" element={<Analytics />} />
               <Route path="messages" element={<Messages />} />
