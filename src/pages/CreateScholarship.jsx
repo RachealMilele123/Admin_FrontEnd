@@ -137,6 +137,7 @@ fetchScholarships();
             <Table.Tr>
               <Table.Th>Title</Table.Th>
               <Table.Th>Category</Table.Th>
+              <Table.Th>Description</Table.Th>
               <Table.Th>Actions</Table.Th>
             </Table.Tr>
           </Table.Thead>
@@ -150,7 +151,8 @@ fetchScholarships();
                   <Badge color="violet">{scholarship.category}</Badge>
                 </Table.Td>
 
-                <Table.Td></Table.Td>
+                <Table.Td>{scholarship.description}</Table.Td>
+
 
                 <Table.Td>
                   <Button
@@ -178,7 +180,7 @@ fetchScholarships();
       >
         {selectedScholarship && (
           <Stack>
-            <Title order={3}>{selectedScholarship.title}</Title>
+            <Title order={3}>{selectedScholarship.name}</Title>
 
             <Divider />
 
