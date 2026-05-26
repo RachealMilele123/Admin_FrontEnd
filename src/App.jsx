@@ -1,42 +1,36 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
 import { MantineProvider } from "@mantine/core";
-import "@mantine/core/styles.css";
 
-import AdminLogin from "./pages/AdminLogin";
-import InternshipAdmin from "./pages/InternshipAdmin";
-import ScholarshipAdmin from "./pages/ScholarshipAdmin";
-import AdminDashboard from "./pages/AdminDashboard";
 import Login from "./Auth/Login";
+import AdminLogin from "./pages/AdminLogin";
+
+import AdminLayout from "./layouts/AdminLayout";
+
+import AdminDashboard from "./pages/AdminDashboard";
+import Users from "./pages/User";
+import CreateUser from "./Auth/CreateUser";
+import CreateScholarship from "./pages/CreateScholarship";
 
 function App() {
   return (
     <MantineProvider>
       <Router>
         <Routes>
-          {/* DEFAULT HOME PAGE */}
-          <Route path="/admin-dashboard" element={<Login />} />
 
-          {/* ADMIN LOGIN */}
+          {/* AUTH */}
+          <Route path="/" element={<Login />} />
           <Route path="/admin-login" element={<AdminLogin />} />
 
-          {/* INTERNSHIP ADMIN */}
-          <Route
-            path="/admin/internships"
-            element={<InternshipAdmin />}
-          />
+          {/* ADMIN LAYOUT (IMPORTANT) */}
+          <Route path="/admin" element={<AdminLayout />}>
 
-          {/* SCHOLARSHIP ADMIN */}
-          <Route
-            path="/admin/scholarships"
-            element={<ScholarshipAdmin />}
-          />
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="users" element={<Users />} />
+            <Route path="create-user" element={<CreateUser />} />
+            <Route path="create-scholarship" element={<CreateScholarship />} />
 
-          {/* ADMIN DASHBOARD */}
-          <Route
-            path="/admin/dashboard"
-            element={<AdminDashboard />}
-          />
+          </Route>
+
         </Routes>
       </Router>
     </MantineProvider>

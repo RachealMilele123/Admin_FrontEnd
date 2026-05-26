@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import {
   AppShell,
@@ -45,16 +46,24 @@ import "./Navbar.css";
 /* ---------------- MOCK DATA ---------------- */
 
 const navItems = [
-  { label: "Overview", icon: IconGauge },
-  { label: "Scholarships", icon: IconSchool },
-  { label: "Users", icon: IconUsers },
-  { label: "Analytics", icon: IconPresentationAnalytics },
-  { label: "Reports", icon: IconFileAnalytics },
-  { label: "Messages", icon: IconMail },
-  { label: "Notifications", icon: IconBell },
-  { label: "Settings", icon: IconSettings },
-  { label: "Security", icon: IconLock },
-  { label: "Logout", icon: IconLogout },
+  { label: "Overview", icon: IconGauge, path: "/admin/dashboard" },
+  {
+    label: "Scholarships",
+    icon: IconSchool,
+    path: "/admin/create-scholarship",
+  },
+  { label: "Users", icon: IconUsers, path: "/admin/users" },
+  {
+    label: "Analytics",
+    icon: IconPresentationAnalytics,
+    path: "/admin/analytics",
+  },
+  { label: "Reports", icon: IconFileAnalytics, path: "/admin/reports" },
+  { label: "Messages", icon: IconMail, path: "/admin/messages" },
+  { label: "Notifications", icon: IconBell, path: "/admin/notifications" },
+  { label: "Settings", icon: IconSettings, path: "/admin/settings" },
+  { label: "Security", icon: IconLock, path: "/admin/security" },
+  { label: "Logout", icon: IconLogout, path: "/admin/logout" },
 ];
 
 /* 📊 Chart Data */
@@ -72,14 +81,19 @@ const barData = [
   { category: "Arts", scholarships: 30 },
   { category: "Law", scholarships: 55 },
 ];
+
 const activity = [
   "New user registered",
   "Scholarship application submitted",
   "Admin updated settings",
   "New message received",
 ];
+
 function AdminDashboard() {
   const [opened, setOpened] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const rows = [
     {
@@ -144,7 +158,8 @@ function AdminDashboard() {
                 key={i}
                 label={item.label}
                 leftSection={<item.icon size={18} />}
-                active={item.label === "Overview"}
+                active={location.pathname === item.path}
+                onClick={() => navigate(item.path)}
               />
             ))}
           </Stack>
@@ -161,7 +176,6 @@ function AdminDashboard() {
       {/* MAIN */}
       <AppShell.Main>
         <Container fluid>
-
           {/* HEADER */}
           <Group justify="space-between" mb="xl">
             <div>
@@ -177,7 +191,7 @@ function AdminDashboard() {
           </Group>
 
           {/* KPI CARDS */}
-           <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} mb="xl">
+          <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} mb="xl">
             <Card shadow="sm" padding="lg" radius="md" withBorder>
               <Group justify="space-between">
                 <div>
@@ -222,7 +236,8 @@ function AdminDashboard() {
                 </ThemeIcon>
               </Group>
             </Card>
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
+
+            <Card shadow="sm" padding="lg" radius="md" withBorder>
               <Group justify="space-between">
                 <div>
                   <Text size="sm" c="dimmed">
@@ -238,10 +253,8 @@ function AdminDashboard() {
             </Card>
           </SimpleGrid>
 
-          {/* CHARTS SECTION (🔥 PREMIUM LOOK) */}
+          {/* CHARTS SECTION */}
           <SimpleGrid cols={{ base: 1, md: 2 }} mb="xl">
-
-            {/* LINE CHART */}
             <Card shadow="lg" radius="lg" p="lg" withBorder>
               <Group justify="space-between" mb="md">
                 <Title order={4}>Growth Analytics</Title>
@@ -260,7 +273,6 @@ function AdminDashboard() {
               />
             </Card>
 
-            {/* BAR CHART */}
             <Card shadow="lg" radius="lg" p="lg" withBorder>
               <Group justify="space-between" mb="md">
                 <Title order={4}>Scholarship Categories</Title>
@@ -271,13 +283,10 @@ function AdminDashboard() {
                 h={280}
                 data={barData}
                 dataKey="category"
-                series={[
-                  { name: "scholarships", color: "violet.6" },
-                ]}
+                series={[{ name: "scholarships", color: "violet.6" }]}
                 tickLine="y"
               />
             </Card>
-
           </SimpleGrid>
 
           {/* TABLE */}
@@ -304,7 +313,9 @@ function AdminDashboard() {
                     <Table.Td>{r.level}</Table.Td>
                     <Table.Td>{r.field}</Table.Td>
                     <Table.Td>
-                      <Badge color={r.status === "Published" ? "green" : "yellow"}>
+                      <Badge
+                        color={r.status === "Published" ? "green" : "yellow"}
+                      >
                         {r.status}
                       </Badge>
                     </Table.Td>
@@ -314,7 +325,7 @@ function AdminDashboard() {
             </Table>
           </Card>
 
-           {/* ACTIVITY PANEL */}
+          {/* ACTIVITY PANEL */}
           <Card shadow="sm" radius="lg" p="lg" withBorder>
             <Title order={4} mb="md">
               Recent Activity
@@ -329,7 +340,6 @@ function AdminDashboard() {
               ))}
             </Stack>
           </Card>
-
         </Container>
       </AppShell.Main>
     </AppShell>
