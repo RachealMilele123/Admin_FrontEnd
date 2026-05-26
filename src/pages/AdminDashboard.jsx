@@ -90,6 +90,8 @@ const activity = [
 ];
 
 function AdminDashboard() {
+  const userInfo = JSON.parse(localStorage.getItem("user"));
+  console.log("user info", userInfo);
   const [opened, setOpened] = useState(false);
 
   const navigate = useNavigate();
@@ -139,7 +141,7 @@ function AdminDashboard() {
           </Group>
 
           <Badge color="green" variant="light">
-            System Online
+            {userInfo ? `Welcome, ${userInfo.firstName} ${userInfo.lastName}` : "System Online"}
           </Badge>
         </Group>
       </AppShell.Header>

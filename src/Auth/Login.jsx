@@ -49,7 +49,7 @@ function Login() {
 
       const data = await res.json();
 
-      console.log(data);
+      console.log("admin info",data);
 
       if (!res.ok) {
         setError(data.error || "Login failed");
@@ -58,6 +58,7 @@ function Login() {
 
       // Save token
       localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.admin));
 
       // Navigate to dashboard
       navigate("/admin/dashboard");
