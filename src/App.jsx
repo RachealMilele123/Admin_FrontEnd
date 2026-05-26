@@ -1,10 +1,8 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { MantineProvider } from "@mantine/core";
+
+import PrivateRoute from "./components/PrivateRoute";
+import PublicRoute from "./components/PublicRoute";
 
 import Login from "./Auth/Login";
 import AdminLogin from "./pages/AdminLogin";
@@ -21,45 +19,31 @@ import Messages from "./pages/Message";
 import Notifications from "./pages/Notifications";
 
 function App() {
-  const token = localStorage.getItem("token");
-
   return (
     <MantineProvider>
       <Router>
         <Routes>
-          {/* LOGIN ROUTES */}
-          <Route
-            path="/login"
-            element={token ? <Navigate to="/admin/dashboard" /> : <Login />}
-          />
+          {/* PUBLIC ROUTES — redirect to dashboard when already logged in */}
+          <Route element={<PublicRoute />}>
+            <Route path="/" element={<AdminLogin />} />
+            <Route path="/login" element={<Login />} />
+          </Route>
 
-          <Route
-            path="/"
-            element={
-              token ? <Navigate to="/admin/dashboard" /> : <AdminLogin />
-            }
-          />
-
-          {/* PROTECTED ADMIN ROUTES */}
-          <Route
-            path="/admin"
-            element={token ? <AdminLayout /> : <Navigate to="/login" />}
-          >
-            <Route path="dashboard" element={<AdminDashboard />} />
-
-            <Route path="users" element={<Users />} />
-
-            <Route path="create-user" element={<CreateUser />} />
-
-            <Route path="create-scholarship" element={<CreateScholarship />} />
-
-            <Route path="reports" element={<Reports />} />
-
-            <Route path="analytics" element={<Analytics />} />
-
-            <Route path="messages" element={<Messages />} />
-
-            <Route path="notifications" element={<Notifications />} />
+          {/* PRIVATE ROUTES — redirect to /login when not authenticated */}
+          <Route element={<PrivateRoute />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="users" element={<Users />} />
+              <Route path="create-user" element={<CreateUser />} />
+              <Route
+                path="create-scholarship"
+                element={<CreateScholarship />}
+              />
+              <Route path="reports" element={<Reports />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="messages" element={<Messages />} />
+              <Route path="notifications" element={<Notifications />} />
+            </Route>
           </Route>
         </Routes>
       </Router>
