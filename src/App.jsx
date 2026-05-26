@@ -13,6 +13,7 @@ import CreateScholarship from "./pages/CreateScholarship";
 import Reports from "./pages/Reports";
 import Analytics from "./pages/Analytics"
 import Messages from "./pages/Message";
+import Notifications from "./pages/Notifications";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
             <Route path="reports" element={<Reports />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="/admin/messages" element={<Messages />} />
+            <Route path="/admin/notifications" element={<Notifications />} />
 
           </Route>
 
