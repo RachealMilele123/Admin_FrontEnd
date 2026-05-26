@@ -94,6 +94,13 @@ function AdminDashboard() {
   console.log("user info", userInfo);
   const [opened, setOpened] = useState(false);
 
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -169,10 +176,10 @@ function AdminDashboard() {
 
         <Divider my="md" />
 
-        <Text size="sm" c="dimmed">
-          Logged in as
-        </Text>
-        <Text fw={600}>Super Admin</Text>
+        <Button size="sm" c="white" onClick={handleLogout} style={{cursor: "pointer"}} fullWidth leftSection={<IconLogout size={18} />}>
+          Logout
+        </Button>
+        {/* <Text fw={600}>Super Admin</Text> */}
       </AppShell.Navbar>
 
       {/* MAIN */}

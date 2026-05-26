@@ -19,26 +19,17 @@ import {
   Box,
 } from "@mantine/core";
 
-import {
-  IconPlus,
-  IconEye,
-  IconFileCv,
-  IconSchool,
-} from "@tabler/icons-react";
+import { IconPlus, IconEye, IconFileCv, IconSchool } from "@tabler/icons-react";
+import { API_URL } from "../api";
 
 function CreateScholarship() {
   const [opened, setOpened] = useState(false);
   const [selectedScholarship, setSelectedScholarship] = useState(null);
 
   const [form, setForm] = useState({
-    title: "",
+    name: "",
     category: "",
-    type: "",
-    organization: "",
-    location: "",
-    deadline: "",
     description: "",
-    attachment: null,
   });
 
   const [scholarships, setScholarships] = useState([
@@ -51,8 +42,7 @@ function CreateScholarship() {
       location: "Canada",
       deadline: "2026-08-10",
       status: "Open",
-      description:
-        "Scholarship for outstanding STEM students worldwide.",
+      description: "Scholarship for outstanding STEM students worldwide.",
     },
     {
       id: 2,
@@ -63,8 +53,7 @@ function CreateScholarship() {
       location: "South Africa",
       deadline: "2026-09-15",
       status: "Open",
-      description:
-        "Leadership and entrepreneurship scholarship program.",
+      description: "Leadership and entrepreneurship scholarship program.",
     },
   ]);
 
@@ -72,24 +61,38 @@ function CreateScholarship() {
     setForm({ ...form, [field]: value });
   };
 
-  const handleCreateScholarship = () => {
-    const newScholarship = {
-      id: scholarships.length + 1,
-      ...form,
-      status: "Open",
-    };
+  const handleCreateScholarship = async () => {
+    try {
+      const res = await fetch(`${API_URL}/scholars/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
 
-    setScholarships([...scholarships, newScholarship]);
+      console.log("response", res);
+
+      if (!res.ok) {
+        console.error("Failed to create scholarship");
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    // const newScholarship = {
+    //   id: scholarships.length + 1,
+    //   ...form,
+    //   status: "Open",
+    // };
+
+    // setScholarships([...scholarships, newScholarship]);
 
     setForm({
       title: "",
       category: "",
-      type: "",
-      organization: "",
-      location: "",
-      deadline: "",
       description: "",
-      attachment: null,
     });
 
     setOpened(false);
@@ -124,7 +127,6 @@ function CreateScholarship() {
 
       {/* SCHOLARSHIP TABLE */}
       <Card shadow="sm" radius="lg" p="lg" withBorder>
-
         <Group justify="space-between" mb="md">
           <Title order={4}>Posted Scholarships</Title>
 
@@ -134,7 +136,6 @@ function CreateScholarship() {
         </Group>
 
         <Table striped highlightOnHover>
-
           <Table.Thead>
             <Table.Tr>
               <Table.Th>Title</Table.Th>
@@ -149,13 +150,10 @@ function CreateScholarship() {
           <Table.Tbody>
             {scholarships.map((scholarship) => (
               <Table.Tr key={scholarship.id}>
-
                 <Table.Td>{scholarship.title}</Table.Td>
 
                 <Table.Td>
-                  <Badge color="violet">
-                    {scholarship.category}
-                  </Badge>
+                  <Badge color="violet">{scholarship.category}</Badge>
                 </Table.Td>
 
                 <Table.Td>{scholarship.type}</Table.Td>
@@ -163,9 +161,7 @@ function CreateScholarship() {
                 <Table.Td>{scholarship.organization}</Table.Td>
 
                 <Table.Td>
-                  <Badge color="green">
-                    {scholarship.status}
-                  </Badge>
+                  <Badge color="green">{scholarship.status}</Badge>
                 </Table.Td>
 
                 <Table.Td>
@@ -173,20 +169,15 @@ function CreateScholarship() {
                     size="xs"
                     variant="light"
                     leftSection={<IconEye size={14} />}
-                    onClick={() =>
-                      setSelectedScholarship(scholarship)
-                    }
+                    onClick={() => setSelectedScholarship(scholarship)}
                   >
                     View
                   </Button>
                 </Table.Td>
-
               </Table.Tr>
             ))}
           </Table.Tbody>
-
         </Table>
-
       </Card>
 
       {/* VIEW DETAILS MODAL */}
@@ -199,15 +190,11 @@ function CreateScholarship() {
       >
         {selectedScholarship && (
           <Stack>
-
-            <Title order={3}>
-              {selectedScholarship.title}
-            </Title>
+            <Title order={3}>{selectedScholarship.title}</Title>
 
             <Divider />
 
             <Grid>
-
               <Grid.Col span={6}>
                 <Text fw={700}>Category</Text>
                 <Text>{selectedScholarship.category}</Text>
@@ -237,9 +224,7 @@ function CreateScholarship() {
                 <Text fw={700}>Description</Text>
                 <Text>{selectedScholarship.description}</Text>
               </Grid.Col>
-
             </Grid>
-
           </Stack>
         )}
       </Modal>
@@ -253,37 +238,26 @@ function CreateScholarship() {
         radius="lg"
       >
         <Stack>
-
           <TextInput
             label="Scholarship Title"
             placeholder="Enter scholarship title"
-            value={form.title}
-            onChange={(e) =>
-              handleChange("title", e.currentTarget.value)
-            }
+            value={form.name}
+            onChange={(e) => handleChange("name", e.currentTarget.value)}
           />
 
           <Grid>
-
-            <Grid.Col span={6}>
-              <Select
+            <Grid.Col span={12}>
+              <TextInput
                 label="Category"
-                placeholder="Select category"
+                placeholder="category e.g STEM / Business / Arts"
                 value={form.category}
-                onChange={(value) =>
-                  handleChange("category", value)
+                onChange={(e) =>
+                  handleChange("category", e.currentTarget.value)
                 }
-                data={[
-                  "Business",
-                  "STEM",
-                  "Law",
-                  "Arts",
-                  "Medicine",
-                ]}
               />
             </Grid.Col>
 
-            <Grid.Col span={6}>
+            {/* <Grid.Col span={6}>
               <Select
                 label="Type"
                 placeholder="Select type"
@@ -298,22 +272,20 @@ function CreateScholarship() {
                   "Diploma",
                 ]}
               />
-            </Grid.Col>
-
+            </Grid.Col> */}
           </Grid>
 
-          <TextInput
+          {/* <TextInput
             label="Organization"
             placeholder="Enter organization"
             value={form.organization}
             onChange={(e) =>
               handleChange("organization", e.currentTarget.value)
             }
-          />
+          /> */}
 
           <Grid>
-
-            <Grid.Col span={6}>
+            {/* <Grid.Col span={6}>
               <TextInput
                 label="Location"
                 placeholder="Enter location"
@@ -322,9 +294,9 @@ function CreateScholarship() {
                   handleChange("location", e.currentTarget.value)
                 }
               />
-            </Grid.Col>
+            </Grid.Col> */}
 
-            <Grid.Col span={6}>
+            {/* <Grid.Col span={6}>
               <TextInput
                 label="Deadline"
                 type="date"
@@ -333,8 +305,7 @@ function CreateScholarship() {
                   handleChange("deadline", e.currentTarget.value)
                 }
               />
-            </Grid.Col>
-
+            </Grid.Col> */}
           </Grid>
 
           <Textarea
@@ -342,13 +313,11 @@ function CreateScholarship() {
             placeholder="Enter scholarship details"
             minRows={4}
             value={form.description}
-            onChange={(e) =>
-              handleChange("description", e.currentTarget.value)
-            }
+            onChange={(e) => handleChange("description", e.currentTarget.value)}
           />
 
           {/* ATTACHMENTS */}
-          <FileInput
+          {/* <FileInput
             label="CV / Resume Attachment"
             placeholder="Upload file"
             leftSection={<IconFileCv size={16} />}
@@ -356,7 +325,7 @@ function CreateScholarship() {
             onChange={(file) =>
               handleChange("attachment", file)
             }
-          />
+          /> */}
 
           <Button
             fullWidth
@@ -366,10 +335,8 @@ function CreateScholarship() {
           >
             Post Scholarship
           </Button>
-
         </Stack>
       </Modal>
-
     </Box>
   );
 }
