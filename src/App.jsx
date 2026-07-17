@@ -15,6 +15,7 @@ import CreateUser from "./Auth/CreateUser";
 import CreateScholarship from "./pages/CreateScholarship";
 import Scholars from "./pages/Scholars";
 import InternshipAdmin from "./pages/InternshipAdmin";
+import AssessmentAdmin from "./pages/AssessmentAdmin";
 import Reports from "./pages/Reports";
 import Analytics from "./pages/Analytics";
 import Messages from "./pages/Message";
@@ -43,6 +44,7 @@ function App() {
               />
               <Route path="scholars" element={<Scholars />} />
               <Route path="internships" element={<InternshipAdmin />} />
+              <Route path="assessments" element={<AssessmentAdmin />} />
               <Route path="reports" element={<Reports />} />
               <Route path="analytics" element={<Analytics />} />
               <Route path="messages" element={<Messages />} />

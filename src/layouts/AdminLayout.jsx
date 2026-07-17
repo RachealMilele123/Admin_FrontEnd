@@ -26,6 +26,7 @@ import {
   IconSettings,
   IconLock,
   IconLogout,
+  IconClipboardCheck,
 } from "@tabler/icons-react";
 
 const navItems = [
@@ -39,6 +40,11 @@ const navItems = [
     label: "Internships",
     icon: IconSchool,
     path: "/admin/internships",
+  },
+  {
+    label: "Assessments",
+    icon: IconClipboardCheck,
+    path: "/admin/assessments",
   },
   { label: "Scholars", icon: IconUsers, path: "/admin/scholars" },
   { label: "Users", icon: IconUsers, path: "/admin/users" },

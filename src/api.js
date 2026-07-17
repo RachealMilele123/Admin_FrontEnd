@@ -251,8 +251,9 @@ export const applicationsAPI = {
 
 export const assessmentsAPI = {
   // Get all assessments
-  getAll: async () => {
-    const response = await fetch(`${API_URL}/assessments`, {
+  getAll: async (filters = {}) => {
+    const queryParams = new URLSearchParams(filters);
+    const response = await fetch(`${API_URL}/assessments?${queryParams}`, {
       method: "GET",
       headers: getAuthHeaders(),
     });
@@ -293,6 +294,95 @@ export const assessmentsAPI = {
     const response = await fetch(`${API_URL}/assessments/${id}`, {
       method: "DELETE",
       headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  // Publish assessment (Admin)
+  publish: async (id) => {
+    const response = await fetch(`${API_URL}/assessments/${id}/publish`, {
+      method: "PATCH",
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  // Close assessment (Admin)
+  close: async (id) => {
+    const response = await fetch(`${API_URL}/assessments/${id}/close`, {
+      method: "PATCH",
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  // Send assessment to users (Admin)
+  send: async (id, userIds) => {
+    const response = await fetch(`${API_URL}/assessments/${id}/send`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ userIds }),
+    });
+    return handleResponse(response);
+  },
+
+  // ==================== QUESTIONS ====================
+
+  // Get all questions for an assessment
+  getQuestions: async (assessmentId) => {
+    const response = await fetch(`${API_URL}/assessments/${assessmentId}/questions`, {
+      method: "GET",
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  // Add question to assessment (Admin)
+  addQuestion: async (assessmentId, questionData) => {
+    const response = await fetch(`${API_URL}/assessments/${assessmentId}/questions`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(questionData),
+    });
+    return handleResponse(response);
+  },
+
+  // Update question (Admin)
+  updateQuestion: async (questionId, questionData) => {
+    const response = await fetch(`${API_URL}/assessments/questions/${questionId}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(questionData),
+    });
+    return handleResponse(response);
+  },
+
+  // Delete question (Admin)
+  deleteQuestion: async (questionId) => {
+    const response = await fetch(`${API_URL}/assessments/questions/${questionId}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  // ==================== USER ASSESSMENTS ====================
+
+  // Get user's assigned assessments
+  getMyAssessments: async () => {
+    const response = await fetch(`${API_URL}/assessments/user/my-assessments`, {
+      method: "GET",
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  // Submit assessment
+  submit: async (id, answers) => {
+    const response = await fetch(`${API_URL}/assessments/${id}/submit`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ answers }),
     });
     return handleResponse(response);
   },

@@ -38,6 +38,7 @@ import {
   IconLock,
   IconMail,
   IconChartBar,
+  IconClipboardCheck,
 } from "@tabler/icons-react";
 
 import { LineChart, BarChart } from "@mantine/charts";
@@ -53,6 +54,11 @@ const navItems = [
     label: "Scholarships",
     icon: IconSchool,
     path: "/admin/create-scholarship",
+  },
+  {
+    label: "Assessments",
+    icon: IconClipboardCheck,
+    path: "/admin/assessments",
   },
   { label: "Users", icon: IconUsers, path: "/admin/users" },
   {
@@ -286,6 +292,21 @@ function AdminDashboard() {
                   </ThemeIcon>
                 </Group>
               </Card>
+
+              <Card shadow="sm" padding="lg" radius="md" withBorder>
+                <Group justify="space-between">
+                  <div>
+                    <Text size="sm" c="dimmed">
+                      Assessments
+                    </Text>
+                    <Title order={2}>{stats?.totalAssessments || 0}</Title>
+                  </div>
+
+                  <ThemeIcon size={50} radius="md" color="violet">
+                    <IconClipboardCheck size={28} />
+                  </ThemeIcon>
+                </Group>
+              </Card>
             </SimpleGrid>
           )}
 
@@ -297,16 +318,18 @@ function AdminDashboard() {
                 <IconChartBar size={20} />
               </Group>
 
-              <LineChart
-                h={280}
-                data={lineData}
-                dataKey="month"
-                series={[
-                  { name: "users", color: "blue.6" },
-                  { name: "applications", color: "green.6" },
-                ]}
-                curveType="natural"
-              />
+              <Box style={{ height: 300, width: "100%" }}>
+                <LineChart
+                  h={280}
+                  data={lineData}
+                  dataKey="month"
+                  series={[
+                    { name: "users", color: "blue.6" },
+                    { name: "applications", color: "green.6" },
+                  ]}
+                  curveType="natural"
+                />
+              </Box>
             </Card>
 
             <Card shadow="lg" radius="lg" p="lg" withBorder>
@@ -315,13 +338,15 @@ function AdminDashboard() {
                 <IconChartBar size={20} />
               </Group>
 
-              <BarChart
-                h={280}
-                data={barData}
-                dataKey="category"
-                series={[{ name: "scholarships", color: "violet.6" }]}
-                tickLine="y"
-              />
+              <Box style={{ height: 300, width: "100%" }}>
+                <BarChart
+                  h={280}
+                  data={barData}
+                  dataKey="category"
+                  series={[{ name: "scholarships", color: "violet.6" }]}
+                  tickLine="y"
+                />
+              </Box>
             </Card>
           </SimpleGrid>
 
