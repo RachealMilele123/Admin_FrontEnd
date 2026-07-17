@@ -24,7 +24,7 @@ import {
 } from "@mantine/core";
 
 import { IconPlus, IconEye, IconSchool } from "@tabler/icons-react";
-import { API_URL } from "../api";
+import { scholarshipsAPI, API_URL } from "../api";
 
 const INITIAL_FORM = {
   scholarId: "",
@@ -55,6 +55,7 @@ function CreateScholarship() {
 
   const fetchScholars = async () => {
     try {
+      // Note: Scholars endpoint may need to be added to API if it exists
       const res = await fetch(`${API_URL}/scholars`, {
         headers: { "Content-Type": "application/json" },
       });
@@ -68,10 +69,7 @@ function CreateScholarship() {
 
   const fetchScholarships = async () => {
     try {
-      const res = await fetch(`${API_URL}/scholarships`, {
-        headers: { "Content-Type": "application/json" },
-      });
-      const data = await res.json();
+      const data = await scholarshipsAPI.getAll();
       setScholarships(data.scholarships ?? []);
     } catch (err) {
       console.error("Failed to fetch scholarships", err);
@@ -129,19 +127,7 @@ function CreateScholarship() {
     console.log("Submitting payload:", payload);
 
     try {
-      const res = await fetch(`${API_URL}/scholarships/create`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) {
-        const errBody = await res.json().catch(() => null);
-        const msg = errBody?.message ?? `Error ${res.status}`;
-        console.error("Failed to create scholarship", res.status, errBody);
-        setSubmitError(`${msg} (scholar id sent: ${form.scholarId})`);
-        return;
-      }
+      await scholarshipsAPI.create(payload);
 
       await fetchScholarships();
       setForm(INITIAL_FORM);
@@ -150,6 +136,7 @@ function CreateScholarship() {
       setOpened(false);
     } catch (err) {
       console.error(err);
+      setSubmitError(err.message || "Failed to create scholarship");
     }
   };
 

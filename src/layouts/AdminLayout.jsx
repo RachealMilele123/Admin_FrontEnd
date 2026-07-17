@@ -35,6 +35,11 @@ const navItems = [
     icon: IconSchool,
     path: "/admin/create-scholarship",
   },
+  {
+    label: "Internships",
+    icon: IconSchool,
+    path: "/admin/internships",
+  },
   { label: "Scholars", icon: IconUsers, path: "/admin/scholars" },
   { label: "Users", icon: IconUsers, path: "/admin/users" },
   {

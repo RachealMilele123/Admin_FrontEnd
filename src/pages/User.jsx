@@ -13,6 +13,8 @@ import {
   Alert,
 } from "@mantine/core";
 
+import { authAPI } from "../api";
+
 
 function Users() {
   const [users, setUsers] = useState([]);
@@ -28,13 +30,7 @@ function Users() {
       setLoading(true);
       setError(null);
 
-      const res = await fetch("http://localhost:8000/api/auth/users");
-
-      if (!res.ok) {
-        throw new Error(`Server Error: ${res.status}`);
-      }
-
-      const data = await res.json();
+      const data = await authAPI.getAllUsers();
 
       setUsers(data?.users ?? []);
     } catch (err) {

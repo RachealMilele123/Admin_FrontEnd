@@ -25,6 +25,8 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 
+import { authAPI } from "../api";
+
 function CreateUser() {
   const navigate = useNavigate();
 
@@ -49,19 +51,7 @@ function CreateUser() {
       setLoading(true);
       setMessage(null);
 
-      const res = await fetch("http://localhost:8000/api/auth/create-user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to create user");
-      }
+      await authAPI.createUser(form);
 
       setMessage({
         type: "success",

@@ -15,6 +15,7 @@ import {
   Loader,
 } from "@mantine/core";
 
+import { authAPI } from "../api";
 import classes from "./AuthenticationTitle.module.css";
 
 function Login() {
@@ -36,36 +37,20 @@ function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch(
-        "http://localhost:8000/api/admin/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const data = await authAPI.login(email, password);
 
-      const data = await res.json();
-
-      console.log("admin info",data);
-
-      if (!res.ok) {
-        setError(data.error || "Login failed");
-        return;
-      }
+      console.log("admin info", data);
 
       // Save token
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.admin));
+      localStorage.setItem("user", JSON.stringify(data.admin || data.user));
 
       // Navigate to dashboard
       navigate("/admin/dashboard");
 
     } catch (err) {
       console.error(err);
-      setError("Server error. Please try again.");
+      setError(err.message || "Server error. Please try again.");
     } finally {
       setLoading(false);
     }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import {
@@ -20,6 +20,7 @@ import {
   Code,
   Box,
   Divider,
+  Loader,
 } from "@mantine/core";
 
 import {
@@ -41,6 +42,7 @@ import {
 
 import { LineChart, BarChart } from "@mantine/charts";
 
+import { dashboardAPI } from "../api";
 import "./Navbar.css";
 
 /* ---------------- MOCK DATA ---------------- */
@@ -93,7 +95,8 @@ function AdminDashboard() {
   const userInfo = JSON.parse(localStorage.getItem("user"));
   console.log("user info", userInfo);
   const [opened, setOpened] = useState(false);
-
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -104,7 +107,25 @@ function AdminDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const rows = [
+  // Fetch dashboard stats
+  useEffect(() => {
+    fetchDashboardStats();
+  }, []);
+
+  const fetchDashboardStats = async () => {
+    try {
+      setLoading(true);
+      const data = await dashboardAPI.getStats();
+      setStats(data);
+    } catch (err) {
+      console.error("Failed to fetch dashboard stats", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Use real data from API if available, otherwise use mock data
+  const rows = stats?.recentScholarships || [
     {
       name: "Global Leaders Scholarship",
       level: "Undergraduate",
@@ -200,67 +221,73 @@ function AdminDashboard() {
           </Group>
 
           {/* KPI CARDS */}
-          <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} mb="xl">
-            <Card shadow="sm" padding="lg" radius="md" withBorder>
-              <Group justify="space-between">
-                <div>
-                  <Text size="sm" c="dimmed">
-                    Total Scholarships
-                  </Text>
-                  <Title order={2}>128</Title>
-                </div>
+          {loading ? (
+            <Group justify="center" p="xl">
+              <Loader size="lg" />
+            </Group>
+          ) : (
+            <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} mb="xl">
+              <Card shadow="sm" padding="lg" radius="md" withBorder>
+                <Group justify="space-between">
+                  <div>
+                    <Text size="sm" c="dimmed">
+                      Total Scholarships
+                    </Text>
+                    <Title order={2}>{stats?.totalScholarships || 0}</Title>
+                  </div>
 
-                <ThemeIcon size={50} radius="md" color="blue">
-                  <IconSchool size={28} />
-                </ThemeIcon>
-              </Group>
-            </Card>
+                  <ThemeIcon size={50} radius="md" color="blue">
+                    <IconSchool size={28} />
+                  </ThemeIcon>
+                </Group>
+              </Card>
 
-            <Card shadow="sm" padding="lg" radius="md" withBorder>
-              <Group justify="space-between">
-                <div>
-                  <Text size="sm" c="dimmed">
-                    Applications
-                  </Text>
-                  <Title order={2}>356</Title>
-                </div>
+              <Card shadow="sm" padding="lg" radius="md" withBorder>
+                <Group justify="space-between">
+                  <div>
+                    <Text size="sm" c="dimmed">
+                      Applications
+                    </Text>
+                    <Title order={2}>{stats?.totalApplications || 0}</Title>
+                  </div>
 
-                <ThemeIcon size={50} radius="md" color="green">
-                  <IconChartBar size={28} />
-                </ThemeIcon>
-              </Group>
-            </Card>
+                  <ThemeIcon size={50} radius="md" color="green">
+                    <IconChartBar size={28} />
+                  </ThemeIcon>
+                </Group>
+              </Card>
 
-            <Card shadow="sm" padding="lg" radius="md" withBorder>
-              <Group justify="space-between">
-                <div>
-                  <Text size="sm" c="dimmed">
-                    Users
-                  </Text>
-                  <Title order={2}>1,250</Title>
-                </div>
+              <Card shadow="sm" padding="lg" radius="md" withBorder>
+                <Group justify="space-between">
+                  <div>
+                    <Text size="sm" c="dimmed">
+                      Users
+                    </Text>
+                    <Title order={2}>{stats?.totalUsers || 0}</Title>
+                  </div>
 
-                <ThemeIcon size={50} radius="md" color="orange">
-                  <IconUsers size={28} />
-                </ThemeIcon>
-              </Group>
-            </Card>
+                  <ThemeIcon size={50} radius="md" color="orange">
+                    <IconUsers size={28} />
+                  </ThemeIcon>
+                </Group>
+              </Card>
 
-            <Card shadow="sm" padding="lg" radius="md" withBorder>
-              <Group justify="space-between">
-                <div>
-                  <Text size="sm" c="dimmed">
-                    Notifications
-                  </Text>
-                  <Title order={2}>85</Title>
-                </div>
+              <Card shadow="sm" padding="lg" radius="md" withBorder>
+                <Group justify="space-between">
+                  <div>
+                    <Text size="sm" c="dimmed">
+                      Notifications
+                    </Text>
+                    <Title order={2}>{stats?.totalNotifications || 0}</Title>
+                  </div>
 
-                <ThemeIcon size={50} radius="md" color="red">
-                  <IconBell size={28} />
-                </ThemeIcon>
-              </Group>
-            </Card>
-          </SimpleGrid>
+                  <ThemeIcon size={50} radius="md" color="red">
+                    <IconBell size={28} />
+                  </ThemeIcon>
+                </Group>
+              </Card>
+            </SimpleGrid>
+          )}
 
           {/* CHARTS SECTION */}
           <SimpleGrid cols={{ base: 1, md: 2 }} mb="xl">

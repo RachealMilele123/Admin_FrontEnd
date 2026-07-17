@@ -8,43 +8,54 @@ import {
   Stack,
   Button,
   Divider,
+  Loader,
 } from "@mantine/core";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { notificationsAPI } from "../api";
 
 function Notifications() {
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: "New User Registered",
-      message: "John Doe created a new account.",
-      type: "User",
-      status: "Unread",
-      time: "2 mins ago",
-    },
-    {
-      id: 2,
-      title: "Scholarship Application",
-      message: "A new scholarship application was submitted.",
-      type: "Scholarship",
-      status: "Unread",
-      time: "1 hour ago",
-    },
-    {
-      id: 3,
-      title: "System Update",
-      message: "System maintenance completed successfully.",
-      type: "System",
-      status: "Read",
-      time: "Yesterday",
-    },
-  ]);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const markAllAsRead = () => {
-    const updated = notifications.map((n) => ({
-      ...n,
-      status: "Read",
-    }));
-    setNotifications(updated);
+  // Fetch notifications from API
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      setLoading(true);
+      const data = await notificationsAPI.getAll();
+      setNotifications(data.notifications ?? []);
+    } catch (err) {
+      console.error("Failed to fetch notifications", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const markAllAsRead = async () => {
+    try {
+      // Mark all notifications as read
+      const markPromises = notifications.map((n) => notificationsAPI.markAsRead(n._id));
+      await Promise.all(markPromises);
+      // Refresh notifications
+      await fetchNotifications();
+    } catch (err) {
+      console.error("Failed to mark notifications as read", err);
+    }
+  };
+
+  const markAsRead = async (id) => {
+    try {
+      await notificationsAPI.markAsRead(id);
+      // Update local state
+      setNotifications((prev) =>
+        prev.map((n) => (n._id === id ? { ...n, status: "Read" } : n))
+      );
+    } catch (err) {
+      console.error("Failed to mark notification as read", err);
+    }
   };
 
   return (
@@ -61,49 +72,70 @@ function Notifications() {
       {/* LIST */}
       <Card shadow="sm">
         <Stack>
+          {loading ? (
+            <Group justify="center" p="xl">
+              <Loader />
+            </Group>
+          ) : notifications.length === 0 ? (
+            <Text c="dimmed" ta="center" py="md">
+              No notifications yet
+            </Text>
+          ) : (
+            notifications.map((n) => (
+              <div key={n._id || n.id}>
+                <Group justify="space-between" align="flex-start">
+                  <div style={{ flex: 1 }}>
+                    <Group>
+                      <Text fw={600}>{n.title}</Text>
 
-          {notifications.map((n) => (
-            <div key={n.id}>
-              <Group justify="space-between" align="flex-start">
+                      <Badge
+                        color={
+                          n.type === "User"
+                            ? "blue"
+                            : n.type === "Scholarship"
+                            ? "green"
+                            : n.type === "System"
+                            ? "gray"
+                            : "blue"
+                        }
+                      >
+                        {n.type}
+                      </Badge>
 
-                <div>
-                  <Group>
-                    <Text fw={600}>{n.title}</Text>
+                      <Badge
+                        color={n.status === "Unread" ? "red" : "green"}
+                      >
+                        {n.status}
+                      </Badge>
+                    </Group>
 
-                    <Badge
-                      color={
-                        n.type === "User"
-                          ? "blue"
-                          : n.type === "Scholarship"
-                          ? "green"
-                          : "gray"
-                      }
-                    >
-                      {n.type}
-                    </Badge>
+                    <Text size="sm" c="dimmed">
+                      {n.message}
+                    </Text>
+                  </div>
 
-                    <Badge
-                      color={n.status === "Unread" ? "red" : "green"}
-                    >
-                      {n.status}
-                    </Badge>
+                  <Group gap="xs">
+                    {n.status === "Unread" && (
+                      <Button
+                        size="xs"
+                        variant="light"
+                        onClick={() => markAsRead(n._id || n.id)}
+                      >
+                        Mark as read
+                      </Button>
+                    )}
+                    <Text size="xs" c="dimmed">
+                      {n.createdAt
+                        ? new Date(n.createdAt).toLocaleDateString()
+                        : n.time || "—"}
+                    </Text>
                   </Group>
+                </Group>
 
-                  <Text size="sm" c="dimmed">
-                    {n.message}
-                  </Text>
-                </div>
-
-                <Text size="xs" c="dimmed">
-                  {n.time}
-                </Text>
-
-              </Group>
-
-              <Divider my="sm" />
-            </div>
-          ))}
-
+                <Divider my="sm" />
+              </div>
+            ))
+          )}
         </Stack>
       </Card>
 

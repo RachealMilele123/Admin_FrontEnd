@@ -14,10 +14,15 @@ import {
   TextInput,
   Textarea,
   Select,
+  Loader,
+  Alert,
 } from "@mantine/core";
 
 import { IconPlus, IconEye, IconUserCheck } from "@tabler/icons-react";
-import { API_URL } from "../api";
+import { scholarsAPI } from "../api";
+
+// Note: Scholars API endpoint - this may be a custom endpoint
+// If not in the main API spec, it should be added to api.js
 
 const INITIAL_FORM = {
   name: "",
@@ -42,18 +47,21 @@ function Scholars() {
   const [selectedScholar, setSelectedScholar] = useState(null);
   const [form, setForm] = useState(INITIAL_FORM);
   const [scholars, setScholars] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [submitError, setSubmitError] = useState("");
 
   const fetchScholars = async () => {
     try {
-      const res = await fetch(`${API_URL}/scholars`, {
-        headers: { "Content-Type": "application/json" },
-      });
-      const data = await res.json();
+      setLoading(true);
+      setError(null);
+      const data = await scholarsAPI.getAll();
       setScholars(data.scholars ?? []);
     } catch (err) {
       console.error("Failed to fetch scholars", err);
+      setError("Failed to load scholars. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -67,30 +75,24 @@ function Scholars() {
   };
 
   const handleSubmit = async () => {
+    setSubmitError("");
+    
     if (!form.name.trim() || !form.description.trim() || !form.category) {
-      setError("All fields are required.");
+      setSubmitError("All fields are required.");
       return;
     }
 
-    setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/scholars/create`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-
-      if (!res.ok) {
-        setError("Failed to create scholar. Please try again.");
-        return;
-      }
+      setLoading(true);
+      await scholarsAPI.create(form);
 
       await fetchScholars();
       setForm(INITIAL_FORM);
       setOpened(false);
+      setSubmitError("");
     } catch (err) {
       console.error(err);
-      setError("An unexpected error occurred.");
+      setSubmitError(err.message || "Failed to create scholar. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -115,6 +117,13 @@ function Scholars() {
         </Button>
       </Group>
 
+      {/* ERROR ALERT */}
+      {error && (
+        <Alert color="red" mb="md">
+          {error}
+        </Alert>
+      )}
+
       {/* TABLE */}
       <Card shadow="sm" radius="lg" p="lg" withBorder>
         <Group justify="space-between" mb="md">
@@ -124,59 +133,65 @@ function Scholars() {
           </Badge>
         </Group>
 
-        <Table striped highlightOnHover>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Name</Table.Th>
-              <Table.Th>Category</Table.Th>
-              <Table.Th>Description</Table.Th>
-              <Table.Th>Created</Table.Th>
-              <Table.Th>Actions</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {scholars.length === 0 ? (
+        {loading ? (
+          <Group justify="center" p="xl">
+            <Loader size="lg" />
+          </Group>
+        ) : (
+          <Table striped highlightOnHover>
+            <Table.Thead>
               <Table.Tr>
-                <Table.Td colSpan={5}>
-                  <Text c="dimmed" ta="center" py="md">
-                    No scholars yet. Click "Add Scholar" to create one.
-                  </Text>
-                </Table.Td>
+                <Table.Th>Name</Table.Th>
+                <Table.Th>Category</Table.Th>
+                <Table.Th>Description</Table.Th>
+                <Table.Th>Created</Table.Th>
+                <Table.Th>Actions</Table.Th>
               </Table.Tr>
-            ) : (
-              scholars.map((s) => (
-                <Table.Tr key={s._id}>
-                  <Table.Td fw={500}>{s.name}</Table.Td>
-                  <Table.Td>
-                    <Badge color="teal" variant="light">
-                      {s.category}
-                    </Badge>
-                  </Table.Td>
-                  <Table.Td>
-                    <Text lineClamp={1} maw={300}>
-                      {s.description}
+            </Table.Thead>
+            <Table.Tbody>
+              {scholars.length === 0 ? (
+                <Table.Tr>
+                  <Table.Td colSpan={5}>
+                    <Text c="dimmed" ta="center" py="md">
+                      No scholars yet. Click "Add Scholar" to create one.
                     </Text>
                   </Table.Td>
-                  <Table.Td>
-                    {s.createdAt
-                      ? new Date(s.createdAt).toLocaleDateString()
-                      : "—"}
-                  </Table.Td>
-                  <Table.Td>
-                    <Button
-                      size="xs"
-                      variant="light"
-                      leftSection={<IconEye size={14} />}
-                      onClick={() => setSelectedScholar(s)}
-                    >
-                      View
-                    </Button>
-                  </Table.Td>
                 </Table.Tr>
-              ))
-            )}
-          </Table.Tbody>
-        </Table>
+              ) : (
+                scholars.map((s) => (
+                  <Table.Tr key={s._id}>
+                    <Table.Td fw={500}>{s.name}</Table.Td>
+                    <Table.Td>
+                      <Badge color="teal" variant="light">
+                        {s.category}
+                      </Badge>
+                    </Table.Td>
+                    <Table.Td>
+                      <Text lineClamp={1} maw={300}>
+                        {s.description}
+                      </Text>
+                    </Table.Td>
+                    <Table.Td>
+                      {s.createdAt
+                        ? new Date(s.createdAt).toLocaleDateString()
+                        : "—"}
+                    </Table.Td>
+                    <Table.Td>
+                      <Button
+                        size="xs"
+                        variant="light"
+                        leftSection={<IconEye size={14} />}
+                        onClick={() => setSelectedScholar(s)}
+                      >
+                        View
+                      </Button>
+                    </Table.Td>
+                  </Table.Tr>
+                ))
+              )}
+            </Table.Tbody>
+          </Table>
+        )}
       </Card>
 
       {/* VIEW DETAILS MODAL */}
@@ -216,7 +231,7 @@ function Scholars() {
         onClose={() => {
           setOpened(false);
           setForm(INITIAL_FORM);
-          setError("");
+          setSubmitError("");
         }}
         title="Add Scholar"
         size="md"
@@ -249,9 +264,9 @@ function Scholars() {
             required
           />
 
-          {error && (
+          {submitError && (
             <Text c="red" size="sm">
-              {error}
+              {submitError}
             </Text>
           )}
 
