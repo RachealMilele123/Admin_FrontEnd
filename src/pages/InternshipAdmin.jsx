@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   TextInput,
   Textarea,
@@ -55,15 +56,48 @@ function InternshipAdmin() {
   const [viewingInternship, setViewingInternship] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const [submitError, setSubmitError] = useState("");
+  const [authError, setAuthError] = useState("");
+
+  const navigate = useNavigate();
 
   const form = useForm({
     initialValues: INITIAL_FORM,
   });
 
+  // Check admin role on component mount
+  useEffect(() => {
+    checkAdminRole();
+  }, []);
+
   // Fetch internships on component mount
   useEffect(() => {
-    fetchInternships();
-  }, []);
+    if (!authError) {
+      fetchInternships();
+    }
+  }, [authError]);
+
+  const checkAdminRole = () => {
+    const token = localStorage.getItem("token");
+    const adminStr = localStorage.getItem("admin");
+    
+    if (!token) {
+      setAuthError("Please log in as an administrator.");
+      return;
+    }
+    
+    try {
+      const admin = adminStr ? JSON.parse(adminStr) : null;
+      if (!admin || admin.role !== "admin") {
+        setAuthError("You do not have administrator privileges.");
+        // Clear invalid auth data
+        localStorage.removeItem("token");
+        localStorage.removeItem("admin");
+      }
+    } catch (e) {
+      console.error("Failed to parse admin data:", e);
+      setAuthError("Please log in as an administrator.");
+    }
+  };
 
   const fetchInternships = async () => {
     try {
@@ -72,6 +106,10 @@ function InternshipAdmin() {
       setInternships(data.internships ?? []);
     } catch (err) {
       console.error("Failed to fetch internships", err);
+      // Handle authentication errors
+      if (err.message.includes("log in") || err.message.includes("administrator privileges")) {
+        setAuthError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -92,6 +130,11 @@ function InternshipAdmin() {
     } catch (err) {
       console.error("Failed to save internship", err);
       setSubmitError(err.message || "Failed to save internship");
+      
+      // Handle authentication errors
+      if (err.message.includes("log in") || err.message.includes("administrator privileges")) {
+        setAuthError(err.message);
+      }
     }
   };
 
@@ -124,6 +167,11 @@ function InternshipAdmin() {
     } catch (err) {
       console.error("Failed to delete internship", err);
       alert(err.message || "Failed to delete internship");
+      
+      // Handle authentication errors
+      if (err.message.includes("log in") || err.message.includes("administrator privileges")) {
+        setAuthError(err.message);
+      }
     }
   };
 
@@ -140,6 +188,22 @@ function InternshipAdmin() {
     form.reset();
     setSubmitError("");
   };
+
+  // Show authentication error if present
+  if (authError) {
+    return (
+      <div style={{ padding: "30px", background: "#f4f7fb", minHeight: "100vh" }}>
+        <Card shadow="sm" radius="lg" p="lg" withBorder>
+          <Alert color="red" title="Authentication Error" mb="md">
+            {authError}
+          </Alert>
+          <Button onClick={() => navigate("/admin/login")} variant="light">
+            Go to Login
+          </Button>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: "30px", background: "#f4f7fb", minHeight: "100vh" }}>

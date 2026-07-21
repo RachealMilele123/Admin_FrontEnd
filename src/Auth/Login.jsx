@@ -39,13 +39,13 @@ function Login() {
     try {
       const data = await authAPI.login(email, password);
 
-      console.log("admin info", data);
+      console.log("User login response:", data);
 
-      // Save token
+      // Save token and user data
       localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.admin || data.user));
+      localStorage.setItem("user", JSON.stringify(data.user || data.admin));
 
-      // Navigate to dashboard
+      // Navigate to user dashboard (if exists) or admin dashboard
       navigate("/admin/dashboard");
 
     } catch (err) {

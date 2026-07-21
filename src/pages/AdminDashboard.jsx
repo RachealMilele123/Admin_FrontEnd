@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 import {
   AppShell,
@@ -21,6 +22,7 @@ import {
   Box,
   Divider,
   Loader,
+  Alert,
 } from "@mantine/core";
 
 import {
@@ -39,6 +41,7 @@ import {
   IconMail,
   IconChartBar,
   IconClipboardCheck,
+  IconAlertCircle,
 } from "@tabler/icons-react";
 
 import { LineChart, BarChart } from "@mantine/charts";
@@ -98,16 +101,17 @@ const activity = [
 ];
 
 function AdminDashboard() {
-  const userInfo = JSON.parse(localStorage.getItem("user"));
-  console.log("user info", userInfo);
+  const { admin, logout } = useAuth();
+  const userInfo = admin;
+  console.log("admin info", userInfo);
   const [opened, setOpened] = useState(false);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login");
+    logout();
+    navigate("/admin/login");
   };
 
   const navigate = useNavigate();
@@ -121,10 +125,12 @@ function AdminDashboard() {
   const fetchDashboardStats = async () => {
     try {
       setLoading(true);
+      setError(null);
       const data = await dashboardAPI.getStats();
       setStats(data);
     } catch (err) {
       console.error("Failed to fetch dashboard stats", err);
+      setError(err.message || "Failed to load dashboard data");
     } finally {
       setLoading(false);
     }
@@ -212,6 +218,19 @@ function AdminDashboard() {
       {/* MAIN */}
       <AppShell.Main>
         <Container fluid>
+          {/* ERROR ALERT */}
+          {error && (
+            <Alert
+              icon={<IconAlertCircle size={18} />}
+              color="red"
+              radius="md"
+              mb="lg"
+              variant="light"
+            >
+              {error}
+            </Alert>
+          )}
+
           {/* HEADER */}
           <Group justify="space-between" mb="xl">
             <div>

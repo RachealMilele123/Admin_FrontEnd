@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { MantineProvider } from "@mantine/core";
 
+import { AuthProvider } from "./context/AuthContext";
+
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
 
@@ -24,8 +26,9 @@ import Notifications from "./pages/Notifications";
 function App() {
   return (
     <MantineProvider>
-      <Router>
-        <Routes>
+      <AuthProvider>
+        <Router>
+          <Routes>
           {/* PUBLIC ROUTES — redirect to dashboard when already logged in */}
           <Route element={<PublicRoute />}>
             <Route path="/" element={<AdminLogin />} />
@@ -53,7 +56,8 @@ function App() {
           </Route>
         </Routes>
       </Router>
-    </MantineProvider>
+    </AuthProvider>
+  </MantineProvider>
   );
 }
 

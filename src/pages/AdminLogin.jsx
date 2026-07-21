@@ -25,6 +25,7 @@ import {
 
 import { useNavigate } from "react-router-dom";
 import { authAPI } from "../api";
+import { useAuth } from "../context/AuthContext";
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -32,6 +33,7 @@ function AdminLogin() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -53,13 +55,17 @@ function AdminLogin() {
       console.log("Admin login response:", data);
 
       // Check if the response contains admin data
-      if (data.admin || data.user) {
-        // Save JWT token
-        localStorage.setItem("token", data.token);
+      const userData = data.admin || data.user;
+      
+      if (userData) {
+        // Verify the user has admin role
+        if (userData.role !== "admin") {
+          setError("You do not have administrator privileges.");
+          return;
+        }
         
-        // Save user/admin info
-        const userData = data.admin || data.user;
-        localStorage.setItem("user", JSON.stringify(userData));
+        // Use auth context to login (stores token and admin data)
+        login(data.token, userData);
 
         // Redirect to Admin Dashboard
         navigate("/admin/dashboard");

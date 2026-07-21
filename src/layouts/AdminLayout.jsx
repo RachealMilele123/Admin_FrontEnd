@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 import {
   AppShell,
@@ -61,7 +62,8 @@ const navItems = [
 ];
 
 function AdminLayout() {
-  const userInfo = JSON.parse(localStorage.getItem("user"));
+  const { admin } = useAuth();
+  const userInfo = admin;
   const [opened, setOpened] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
